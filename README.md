@@ -54,12 +54,22 @@ Functional Design → NFR Req → NFR Design → Test Planning → Code Gen → 
 
 ### New Extensions (Opt-In)
 
+All extensions share one consistent **enforcement architecture** so the AI model applies them the same way at every stage:
+
+- **Stable rule IDs** (e.g. `CR-01`, `DEPLOY-03`, `QA-04`, `SECURITY-08`, `COMPLIANCE-02`, `PBT-06`) for traceable findings
+- **Blocking-finding behavior** — non-compliant rules block "Continue to Next Stage" and are logged in `aidlc-docs/audit.md`
+- **Default / Partial enforcement** modes, recorded in `aidlc-docs/aidlc-state.md` under `## Extension Configuration`
+- **Verification criteria** per rule (objective compliant / non-compliant / N/A checks)
+- An **Enforcement Integration** table mapping each rule to the real AI-DLC stages it applies to
+
 | Directory | Files | What It Enforces |
 |-----------|-------|------------------|
-| `extensions/qa/` | `qa-testing.md` + `.opt-in.md` | Automated quality gates, test pyramid, coverage targets, manual QA checklist, regression rules |
-| `extensions/code-review/` | `code-review.md` + `.opt-in.md` | Reviewer requirements, 6-category checklist, feedback labels, PR standards, response SLAs |
-| `extensions/deployment/` | `deployment-cicd.md` + `.opt-in.md` | GitHub Actions pipelines, environment strategy, rollback plan, release management, DORA metrics |
-| `extensions/security/compliance/` | `security-compliance.md` + `.opt-in.md` | OWASP release checklist, scanning schedule, vulnerability SLAs, incident response |
+| `extensions/qa/` | `qa-testing.md` + `.opt-in.md` | `QA-01..07` — automated quality gates, test pyramid, coverage targets, manual QA checklist, regression rules, quality metrics |
+| `extensions/code-review/` | `code-review.md` + `.opt-in.md` | `CR-01..06` — reviewer requirements, 6-category checklist, feedback labels, PR standards, response SLAs, best practices |
+| `extensions/deployment/` | `deployment-cicd.md` + `.opt-in.md` | `DEPLOY-01..07` — CI pipeline gates (provider-agnostic), environment strategy, deployment checklist, rollback plan, release management, monitoring, DORA metrics |
+| `extensions/security/baseline/` | `security-baseline.md` + `.opt-in.md` | `SECURITY-01..15` — mandatory baseline controls (encryption, logging, input validation, access control, hardening, supply chain, auth), mapped to OWASP Top 10:2025 |
+| `extensions/security/compliance/` | `security-compliance.md` + `.opt-in.md` | `COMPLIANCE-01..05` — OWASP Top 10:2025 release checklist, scanning schedule, vulnerability SLAs, incident response (complements the baseline rules) |
+| `extensions/testing/property-based/` | `property-based-testing.md` + `.opt-in.md` | `PBT-01..10` — property identification, round-trip/invariant/idempotency/oracle/stateful properties, generator quality, shrinking, framework selection |
 
 ## Usage
 

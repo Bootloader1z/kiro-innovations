@@ -1,6 +1,6 @@
 # Deployment & CI/CD — Opt-In
 
-**Extension**: Deployment & CI/CD (GitHub Actions)
+**Extension**: Deployment & CI/CD (CI-provider-agnostic; the team's actual CI is defined in `team-standards.md`)
 
 ## Opt-In Prompt
 

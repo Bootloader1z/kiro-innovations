@@ -292,16 +292,29 @@ These rules are cross-cutting constraints that apply to every AI-DLC stage. At e
 
 ## Appendix: OWASP Reference Mapping
 
-<!-- TODO: CRITICAL - This entire OWASP mapping table needs verification. The "2025" edition may not exist; the latest published OWASP Top 10 is 2021. Category IDs (A01-A10), numbering, and names must be validated against the actual published standard before relying on this mapping. -->
-For human reviewers, the following maps SECURITY rules to OWASP Top 10 (2025) categories:
+The following maps SECURITY rules to the **OWASP Top 10:2025** categories (the 8th installment, current published edition). The category IDs, names, and ordering below are verified against the official list published at `https://owasp.org/Top10/2025/`.
 
-| SECURITY Rule | OWASP Category |
+| SECURITY Rule | OWASP Top 10:2025 Category |
 |---|---|
-| SECURITY-08 | A01:2025 – Broken Access Control |
-| SECURITY-09 | A02:2025 – Security Misconfiguration |
-| SECURITY-10 | A03:2025 – Software Supply Chain Failures |
-| SECURITY-11 | A06:2025 – Insecure Design |
-| SECURITY-12 | A07:2025 – Authentication Failures |
-| SECURITY-13 | A08:2025 – Software or Data Integrity Failures |
-| SECURITY-14 | A09:2025 – Logging & Alerting Failures |
-| SECURITY-15 | A10:2025 – Mishandling of Exceptional Conditions |
+| SECURITY-01 (Encryption at Rest and in Transit) | A04:2025 – Cryptographic Failures |
+| SECURITY-02 (Access Logging on Network Intermediaries) | A09:2025 – Security Logging & Alerting Failures |
+| SECURITY-03 (Application-Level Logging) | A09:2025 – Security Logging & Alerting Failures |
+| SECURITY-04 (HTTP Security Headers) | A02:2025 – Security Misconfiguration |
+| SECURITY-05 (Input Validation on All API Parameters) | A05:2025 – Injection |
+| SECURITY-06 (Least-Privilege Access Policies) | A01:2025 – Broken Access Control |
+| SECURITY-07 (Restrictive Network Configuration) | A02:2025 – Security Misconfiguration |
+| SECURITY-08 (Application-Level Access Control) | A01:2025 – Broken Access Control |
+| SECURITY-09 (Security Hardening and Misconfiguration Prevention) | A02:2025 – Security Misconfiguration |
+| SECURITY-10 (Software Supply Chain Security) | A03:2025 – Software Supply Chain Failures |
+| SECURITY-11 (Secure Design Principles) | A06:2025 – Insecure Design |
+| SECURITY-12 (Authentication and Credential Management) | A07:2025 – Authentication Failures |
+| SECURITY-13 (Software and Data Integrity Verification) | A08:2025 – Software or Data Integrity Failures |
+| SECURITY-14 (Alerting and Monitoring) | A09:2025 – Security Logging & Alerting Failures |
+| SECURITY-15 (Exception Handling and Fail-Safe Defaults) | A10:2025 – Mishandling of Exceptional Conditions |
+
+**Notes on the 2025 edition** (relevant to the mappings above):
+- **A01:2025 – Broken Access Control** remains #1 and now absorbs Server-Side Request Forgery (SSRF), previously a standalone 2021 category.
+- **A03:2025 – Software Supply Chain Failures** is an expansion of the former *A06:2021 – Vulnerable and Outdated Components*, broadened to cover dependencies, build systems, and distribution infrastructure.
+- **A07:2025 – Authentication Failures** was renamed from *Identification and Authentication Failures* (2021).
+- **A09:2025 – Security Logging & Alerting Failures** was renamed from *Security Logging and Monitoring Failures* (2021) to emphasize alerting.
+- **A10:2025 – Mishandling of Exceptional Conditions** is new in 2025 (improper error handling, logical errors, failing open).

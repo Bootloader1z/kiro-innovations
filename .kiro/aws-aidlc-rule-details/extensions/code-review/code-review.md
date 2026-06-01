@@ -1,17 +1,40 @@
 # Code Review Framework
 
-**Purpose**: Defines code review standards, processes, and expectations for the AI-DLC workflow.  
-**Applies to**: All code changes before merge to main branch.
+## Overview
+
+This document defines mandatory code review standards, processes, and expectations for the AI-DLC workflow. These rules are cross-cutting constraints that apply across applicable AI-DLC stages — they are not optional guidance but hard constraints that stages MUST enforce when generating code, verifying build readiness, and gating merge operations.
+
+All code changes require review before merge to the main branch. No exceptions.
+
+**Enforcement**: At each applicable stage, the model MUST verify compliance with these rules before presenting the stage completion message to the user.
+
+### Blocking Code Review Finding Behavior
+
+A **blocking code review finding** means:
+1. The finding MUST be listed in the stage completion message under a "Code Review Findings" section with the CR rule ID and description
+2. The stage MUST NOT present the "Continue to Next Stage" option until all blocking findings are resolved
+3. The model MUST present only the "Request Changes" option with a clear explanation of what needs to change
+4. The finding MUST be logged in `aidlc-docs/audit.md` with the CR rule ID, description, and stage context
+
+If a CR rule is not applicable to the current change, mark it as **N/A** in the compliance summary — this is not a blocking finding.
+
+### Default Enforcement
+
+All rules in this document are **blocking** by default. If any rule's verification criteria are not met, it is a blocking code review finding — follow the blocking finding behavior defined above.
+
+### Partial Enforcement Mode
+
+If the user selected **Partial** during opt-in (option B), only the checklist and PR-submission rules are enforced as blocking — i.e. CR-02 and CR-04. Reviewer-count (CR-01) and SLA (CR-05) rules become advisory (non-blocking). CR-03 and CR-06 remain informational guidance. Log the enforcement mode in `aidlc-docs/aidlc-state.md` under `## Extension Configuration`.
+
+### Verification Criteria Format
+
+Verification items in this document are plain bullet points describing compliance checks. Each item should be evaluated as compliant or non-compliant during review.
 
 ---
 
-## 1. Review Requirements
+## Rule CR-01: Review Requirements
 
-### When is Review Required?
-
-ALL code changes require review before merge. No exceptions.
-
-### Reviewer Count by Change Type
+**Rule**: ALL code changes require review before merge. The minimum number of reviewers depends on the change type:
 
 | Change Type | Minimum Reviewers | Review Depth |
 |-------------|-------------------|--------------|
@@ -23,11 +46,17 @@ ALL code changes require review before merge. No exceptions.
 | Infrastructure/deployment | 2 reviewers | Full review |
 | Hotfix (production emergency) | 1 reviewer (post-deploy review by 2nd) | Expedited |
 
+**Verification**:
+- The change has been assigned the minimum number of reviewers for its change type
+- All assigned reviewers have completed their review before merge
+- Security-sensitive changes have at least one security-aware reviewer
+- Database migrations include a documented rollback plan
+
 ---
 
-## 2. Code Review Checklist
+## Rule CR-02: Code Review Checklist
 
-Every reviewer MUST evaluate against these categories:
+**Rule**: Every reviewer MUST evaluate the change against all six categories below. Authors MUST self-review against this checklist before submitting.
 
 ### Functional Correctness
 - [ ] Does the code solve the stated requirement?
@@ -76,11 +105,16 @@ Every reviewer MUST evaluate against these categories:
 - [ ] Caching considered for expensive operations?
 - [ ] No blocking operations in request cycle?
 
+**Verification**:
+- All six checklist categories have been evaluated by the reviewer
+- Any unchecked item has a documented justification or is marked N/A
+- The author performed a self-review before submitting the PR
+
 ---
 
-## 3. Review Feedback Categories
+## Rule CR-03: Review Feedback Categories
 
-Use these labels when providing feedback:
+**Rule**: Reviewers MUST use the following labels when providing feedback. Only MUST FIX and SHOULD FIX are blocking:
 
 | Label | Meaning | Blocking? | Example |
 |-------|---------|-----------|---------|
@@ -91,24 +125,17 @@ Use these labels when providing feedback:
 | **QUESTION** | Seeking clarification | No | "Why was this approach chosen over X?" |
 | **PRAISE** | Highlighting good work | No | "Nice use of the strategy pattern here" |
 
----
-
-## 4. Review Response Time SLA
-
-| Priority | First Review Within | Resolution Within |
-|----------|--------------------|--------------------|
-| Critical (production fix) | 2 hours | 4 hours |
-| High (blocking other work) | 4 hours | 1 business day |
-| Normal | 1 business day | 2 business days |
-| Low (refactoring, docs) | 2 business days | 5 business days |
+**Verification**:
+- All review comments use one of the defined feedback labels
+- MUST FIX findings are resolved before merge
+- SHOULD FIX findings are resolved or have documented justification before merge
+- Non-blocking feedback (CONSIDER, NIT, QUESTION, PRAISE) does not block merge
 
 ---
 
-## 5. PR Submission Standards
+## Rule CR-04: PR Submission Standards
 
-### Before Submitting a PR
-
-The author MUST:
+**Rule**: Before submitting a PR, the author MUST:
 - [ ] Self-review the diff (catch obvious issues)
 - [ ] Ensure all CI gates pass (lint, tests, build)
 - [ ] Write a clear PR description (what, why, how)
@@ -141,9 +168,37 @@ The author MUST:
 - [ ] Self-reviewed the diff
 ```
 
+**Verification**:
+- PR description follows the template structure (What, Why, How, Testing sections present)
+- All CI gates pass before review is requested
+- PR size is within limits (< 800 lines; > 400 lines has justification)
+- Related user story or issue is linked
+- Author has self-reviewed the diff (confirmed in checklist)
+
 ---
 
-## 6. Review Best Practices
+## Rule CR-05: Review Response Time SLA
+
+**Rule**: Reviewers MUST respond within the SLA defined by the priority of the change:
+
+| Priority | First Review Within | Resolution Within |
+|----------|--------------------|--------------------|
+| Critical (production fix) | 2 hours | 4 hours |
+| High (blocking other work) | 4 hours | 1 business day |
+| Normal | 1 business day | 2 business days |
+| Low (refactoring, docs) | 2 business days | 5 business days |
+
+**Verification**:
+- The PR has an assigned priority level
+- First review was provided within the SLA for the assigned priority
+- All blocking findings were resolved within the resolution SLA
+- Stale PRs (exceeding SLA) are escalated or reassigned
+
+---
+
+## Rule CR-06: Review Best Practices & Anti-Patterns
+
+**Rule**: Reviewers and authors MUST follow these practices and avoid the listed anti-patterns.
 
 ### For Reviewers
 - Review within SLA — don't block teammates
@@ -167,19 +222,24 @@ The author MUST:
 - ❌ Drive-by reviews (commenting without context)
 - ❌ Stale PRs (letting reviews sit for days)
 
+**Verification**:
+- Review comments demonstrate engagement with the code (not rubber-stamping)
+- Feedback is specific and actionable (not vague or style-only blocking)
+- Author has responded to all review comments
+- No anti-pattern behaviors are evident in the review thread
+
 ---
 
-## 7. AI-DLC Integration Points
+## Enforcement Integration
 
-| AI-DLC Phase | Code Review Activity |
-|-------------|---------------------|
-| Code Generation | Self-review generated code against checklist |
-| Build and Test | Verify all gates pass before review request |
-| Code Review | Full review per this framework |
-| Pre-Deployment | Final approval gate before merge |
+| Stage | Applicable Rules | Enforcement |
+|-------|-----------------|-------------|
+| Code Generation | CR-02 | Self-review generated code against checklist |
+| Build and Test | CR-04 | CI gates pass before review is requested |
+| Operations | CR-01, CR-03, CR-05, CR-06 | Peer review + merge gate enforcement |
 
-### Enforcement
-
-- No code merges to main without at least 1 approval
-- MUST FIX findings block merge until resolved
-- Review history preserved in PR for audit trail
+At each stage:
+- Evaluate all applicable CR rule verification criteria against the artifacts produced
+- Include a "Code Review Compliance" section in the stage completion summary listing each applicable rule as compliant, non-compliant, or N/A
+- If any rule is non-compliant, this is a blocking code review finding — follow the blocking finding behavior defined in the Overview
+- Check the extension's `Enabled` status in `aidlc-docs/aidlc-state.md` under `## Extension Configuration` before enforcing; if disabled, skip enforcement and log the skip in `aidlc-docs/audit.md`
