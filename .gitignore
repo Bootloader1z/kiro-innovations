@@ -1,1 +1,37 @@
+# OS
 .DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build output
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Graphify output (local, rebuild per machine)
+graphify-out/manifest.json
+graphify-out/cost.json
+
+# Logs
+*.log
+npm-debug.log*
+
+# Testing
+coverage/
+.phpunit.result.cache
+
+# Docker
+docker-compose.override.yml

@@ -1,3 +1,7 @@
+---
+inclusion: auto
+---
+
 # Subagent Delegation
 
 ## When to Delegate
